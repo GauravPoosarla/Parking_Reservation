@@ -10,6 +10,12 @@ const init = async () => {
   });
 
   await server.register(require('./src/plugins/authentication'));
+  await server.register({
+    plugin: require('./src/plugins/authorization'),
+    options: {
+      restrictedRoutes: ['/reservations'],
+    },
+  });
   server.route(routes);
 
   await server.start();
