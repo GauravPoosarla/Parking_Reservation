@@ -3,7 +3,10 @@ const axios = require('axios');
 const Boom = require('@hapi/boom');
 
 const validateJWT = async (request, h) => {
-  const token = request.headers.authorization;
+  const completeToken = request.headers.authorization;
+  const tokenParts = completeToken.split(' ');
+  const token = tokenParts[1];
+
   if (!token) {
     throw Boom.unauthorized('Missing auth token');
   }
