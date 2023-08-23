@@ -1,10 +1,16 @@
 const parkingController = require('../controllers/parkingController');
+const schemas = require('../utils/common/schema');
 
 const parkingRoutes = [
   {
     method: 'POST',
     path: '/reserve',
-    handler: parkingController.reserve, //TODO: add payload validation
+    handler: parkingController.reserve, 
+    options: {
+      validate: {
+        payload: schemas.reservePayloadSchema,
+      }
+    }
   },
   {
     method: 'GET',
@@ -15,16 +21,31 @@ const parkingRoutes = [
     method: 'GET',
     path: '/available-slots-for-time',
     handler: parkingController.getAvailableSlotsForTime,
+    options: {
+      validate: {
+        query: schemas.timeQueryParamSchema,
+      }
+    }
   },
   {
     method: 'DELETE',
     path: '/cancel-reservation',
     handler: parkingController.cancelReservation,
+    options: {
+      validate: {
+        query: schemas.cancelReservationQueryParamSchema,
+      }
+    }
   },
   {
     method: 'PUT',
     path: '/update-reservation',
-    handler: parkingController.updateReservation, //TODO: add payload validation
+    handler: parkingController.updateReservation,
+    options: {
+      validate: {
+        payload: schemas.updateReservationPayloadSchema,
+      }
+    }
   },
   {
     method: 'GET',
