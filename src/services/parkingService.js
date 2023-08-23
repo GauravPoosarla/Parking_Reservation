@@ -2,6 +2,19 @@ const Boom = require('@hapi/boom');
 const db = require('../../database/models/index.js');
 
 const reserve = async (slot, startTime, endTime, date, email) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const reservationDate = new Date(date);
+  reservationDate.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if (reservationDate < today || reservationDate > tomorrow) {
+    throw Boom.badRequest('Invalid reservation date. Reservations can only be made for today and tomorrow.');
+  }
+
   if (new Date(endTime) <= new Date(startTime)) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
