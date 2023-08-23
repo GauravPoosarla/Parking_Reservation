@@ -2,16 +2,76 @@ const Boom = require('@hapi/boom');
 const db = require('../../database/models/index.js');
 
 const reserve = async (slot, startTime, endTime, date, email) => {
-  const reservation = await db.Parking.findOne({ 
+
+  if (new Date(endTime) <= new Date(startTime)) {
+    throw Boom.badRequest('End time cannot be before or equal to start time.');
+  }
+
+  // Intersections:
+  // 1. startTime <= startTime && (endTime <= endTime && endTime >= startTime)
+  // 2. endTime >= endTime && (startTime <= endTime && startTime >= startTime)
+  // 3. endTime >= endTime && (startTime >= startTime && startTime <= endTime)
+
+  const intersectingReservations = await db.Parking.findAll({
+    attributes: ['slot'],
     where: {
-      slot: slot,
       date: date,
-      startTime: startTime,
-      endTime: endTime,
+      slot: slot,
+      [db.Sequelize.Op.and]: [
+        {
+          [db.Sequelize.Op.or]: [
+            {
+              startTime: {
+                [db.Sequelize.Op.lt]: endTime,
+                [db.Sequelize.Op.gte]: startTime
+              },
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gt]: startTime,
+                [db.Sequelize.Op.lt]: endTime
+              }
+            },
+            {
+              startTime: {
+                [db.Sequelize.Op.lte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
+              },
+              endTime: {
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.gte]: endTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime,
+                [db.Sequelize.Op.lte]: startTime
+              },
+              startTime: {
+                [db.Sequelize.Op.lte]: endTime,
+                [db.Sequelize.Op.gte]: startTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime,
+                [db.Sequelize.Op.lte]: startTime
+              },
+              startTime: {
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
+              }
+            }
+          ]
+        }
+      ]
     }
   });
 
-  if (reservation) {
+  if (intersectingReservations.length > 0) {
     throw Boom.badRequest('Slot already reserved, Please choose another slot');
   }
 
@@ -21,7 +81,6 @@ const reserve = async (slot, startTime, endTime, date, email) => {
     startTime: startTime,
     endTime: endTime,
     userEmail: email,
-    slotBooked: true
   });
 
   return newReservation;
@@ -33,37 +92,75 @@ const getAllReservations = async () => {
 };
 
 const getAvailableSlotsForTime = async (startTime, endTime, date) => {
-  const allReservationsForTime = await db.Parking.findAll({
+  if (new Date(endTime) <= new Date(startTime)) {
+    throw Boom.badRequest('End time cannot be before or equal to start time.');
+  }
+
+  const reservedSlots = await db.Parking.findAll({
+    attributes: ['slot'],
     where: {
       date: date,
-      [db.Sequelize.Op.or]: [
+      [db.Sequelize.Op.and]: [
         {
-          startTime: {
-            [db.Sequelize.Op.lte]: startTime
-          },
-          endTime: {
-            [db.Sequelize.Op.gte]: startTime
-          }
-        },
-        {
-          startTime: {
-            [db.Sequelize.Op.lte]: endTime
-          },
-          endTime: {
-            [db.Sequelize.Op.gte]: endTime
-          }
+          [db.Sequelize.Op.or]: [
+            {
+              startTime: {
+                [db.Sequelize.Op.lt]: endTime,
+                [db.Sequelize.Op.gte]: startTime
+              },
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gt]: startTime,
+                [db.Sequelize.Op.lt]: endTime
+              }
+            },
+            {
+              startTime: {
+                [db.Sequelize.Op.lte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
+              },
+              endTime: {
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.gte]: endTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime,
+                [db.Sequelize.Op.lte]: startTime
+              },
+              startTime: {
+                [db.Sequelize.Op.lte]: endTime,
+                [db.Sequelize.Op.gte]: startTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime,
+                [db.Sequelize.Op.lte]: startTime
+              },
+              startTime: {
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
+              }
+            }
+          ]
         }
       ]
     }
   });
 
-  const reservedSlots = allReservationsForTime.map(reservation => reservation.slot);
-  const allSlots = Array.from(Array(20).keys()).map(slot => slot + 1); // TODO: bring slots number from config
-  const availableSlots = allSlots.filter(slot => !reservedSlots.includes(slot));
+  const allSlots = Array.from(Array(process.env.SLOTS).keys()).map(slot => slot + 1);
+  const reservedSlotNumbers = reservedSlots.map(reservation => reservation.slot);
+  const availableSlots = allSlots.filter(slot => !reservedSlotNumbers.includes(slot));
 
   return availableSlots;
 };
-  
+
 const cancelReservation = async (startTime, endTime, date, slot, email) => {
   const reservation = await db.Parking.findOne({
     where: {
