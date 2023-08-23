@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom');
 
 const authorizeAdmin = (request, h) => {
-  const user = request.user; // Assuming this is set by your JWT validation plugin
+  const user = request.user;
 
   if (user && user.role === 'admin') {
     return h.continue;
