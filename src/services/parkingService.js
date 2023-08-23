@@ -2,7 +2,6 @@ const Boom = require('@hapi/boom');
 const db = require('../../database/models/index.js');
 
 const reserve = async (slot, startTime, endTime, date, email) => {
-
   if (new Date(endTime) <= new Date(startTime)) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
@@ -22,7 +21,7 @@ const reserve = async (slot, startTime, endTime, date, email) => {
           [db.Sequelize.Op.or]: [
             {
               startTime: {
-                [db.Sequelize.Op.lt]: endTime,
+                [db.Sequelize.Op.lte]: endTime,
                 [db.Sequelize.Op.gte]: startTime
               },
               endTime: {
@@ -31,8 +30,8 @@ const reserve = async (slot, startTime, endTime, date, email) => {
             },
             {
               endTime: {
-                [db.Sequelize.Op.gt]: startTime,
-                [db.Sequelize.Op.lt]: endTime
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
               }
             },
             {
@@ -181,7 +180,11 @@ const cancelReservation = async (startTime, endTime, date, slot, email) => {
 };
   
 
-const updateReservation = async (slot, startTime, endTime, date, email, newSlot) => {
+const updateReservation = async (slot, startTime, endTime, date, email, newSlot, newStartTime, newEndTime) => {
+  if (new Date(newEndTime) <= new Date(newStartTime)) {
+    throw Boom.badRequest('End time cannot be before or equal to start time.');
+  }
+
   const reservation = await db.Parking.findOne({
     where: {
       slot: slot,
@@ -196,20 +199,72 @@ const updateReservation = async (slot, startTime, endTime, date, email, newSlot)
     throw Boom.notFound('Reservation not found');
   }
 
-  const newReservation = await db.Parking.findOne({
+  const intersectingReservations = await db.Parking.findAll({
+    attributes: ['slot'],
     where: {
-      slot: newSlot,
       date: date,
-      startTime: startTime,
-      endTime: endTime
+      slot: newSlot,
+      [db.Sequelize.Op.and]: [
+        {
+          [db.Sequelize.Op.or]: [
+            {
+              startTime: {
+                [db.Sequelize.Op.lt]: endTime,
+                [db.Sequelize.Op.gte]: startTime
+              },
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gt]: startTime,
+                [db.Sequelize.Op.lt]: endTime
+              }
+            },
+            {
+              startTime: {
+                [db.Sequelize.Op.lte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
+              },
+              endTime: {
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.gte]: endTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime,
+                [db.Sequelize.Op.lte]: startTime
+              },
+              startTime: {
+                [db.Sequelize.Op.lte]: endTime,
+                [db.Sequelize.Op.gte]: startTime
+              }
+            },
+            {
+              endTime: {
+                [db.Sequelize.Op.gte]: endTime,
+                [db.Sequelize.Op.lte]: startTime
+              },
+              startTime: {
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
+              }
+            }
+          ]
+        }
+      ]
     }
   });
-
-  if (newReservation) {
+  
+  if (intersectingReservations) {
     throw Boom.badRequest('Slot already reserved, Please choose another slot');
   }
 
   reservation.slot = newSlot;
+  reservation.startTime = newStartTime;
+  reservation.endTime = newEndTime;
   await reservation.save();
   return reservation; // TODO: return updated reservation
 };
