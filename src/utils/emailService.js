@@ -5,7 +5,6 @@ const { google } = require('googleapis');
 const OAuth2 = google.auth.OAuth2;
 
 const createTransporter = async () => {
-  console.log(process.env);
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
