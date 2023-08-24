@@ -51,6 +51,16 @@ const parkingRoutes = [
     method: 'GET',
     path: '/get-reservations-of-user',
     handler: parkingController.getReservationsOfUser,
+  },
+  {
+    method: 'GET',
+    path: '/get-status-of-reservation',
+    handler: parkingController.getStatusOfReservation,
+    options: {
+      validate: {
+        query: schemas.getStatusOfReservationQueryParamSchema,
+      }
+    }
   }
 ];
 

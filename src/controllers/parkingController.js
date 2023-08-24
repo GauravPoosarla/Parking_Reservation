@@ -105,11 +105,25 @@ const getReservationsOfUser = async (request, h) => {
   }
 };
 
+const getStatusOfReservation = async (request, h) => {
+  const {slot, startTime, endTime, date} = request.query;
+  try {
+    const reservation = await parkingServices.getStatusOfReservation(slot, startTime, endTime, date);
+    return h.response(reservation).code(200);
+  } catch (error) {
+    if(Boom.isBoom(error)) {
+      return error;
+    }
+    return Boom.badImplementation(error);
+  }
+};
+
 module.exports = {
   reserve,
   getAllReservations,
   getAvailableSlotsForTime,
   cancelReservation,
   updateReservation,
-  getReservationsOfUser
+  getReservationsOfUser,
+  getStatusOfReservation,
 };

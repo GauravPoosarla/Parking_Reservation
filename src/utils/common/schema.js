@@ -28,10 +28,18 @@ const updateReservationPayloadSchema = Joi.object({
   newSlot: Joi.string().required()
 });
 
+const getStatusOfReservationQueryParamSchema = Joi.object({
+  startTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
+  endTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
+  date: Joi.date().iso().required(),
+  slot: Joi.string().required()
+}).options({ stripUnknown: true });
+
 module.exports = {
   reservePayloadSchema,
   timeQueryParamSchema,
   cancelReservationQueryParamSchema,
-  updateReservationPayloadSchema
+  updateReservationPayloadSchema,
+  getStatusOfReservationQueryParamSchema
 };
 
