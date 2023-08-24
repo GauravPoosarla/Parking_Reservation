@@ -3,8 +3,26 @@ const amqp = require('amqplib');
 const db = require('../../database/models/index.js');
 
 const reserve = async (slot, startTime, endTime, date, email) => {
-  // TODO: handle advance booking only till tomorrow and no past dates
-  if (new Date(endTime) <= new Date(startTime)) {
+  const startTimeComponents = startTime.split(':');
+  const startHours = parseInt(startTimeComponents[0]);
+  const startMinutes = parseInt(startTimeComponents[1]);
+  const startSeconds = parseInt(startTimeComponents[2]);
+
+  date.setUTCHours(startHours - 5, startMinutes - 30, startSeconds); // IST to UTC
+
+  if(date < new Date()) {
+    throw Boom.badRequest('Reservation cannot be made for past dates');
+  }
+
+  // advance reservation can be done only for tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if(date > tomorrow) {
+    throw Boom.badRequest('Reservation can be made only for 1 day in advance');
+  }
+
+  if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
@@ -116,7 +134,7 @@ const getAllReservations = async () => {
 };
 
 const getAvailableSlotsForTime = async (startTime, endTime, date) => {
-  if (new Date(endTime) <= new Date(startTime)) {
+  if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
@@ -205,9 +223,32 @@ const cancelReservation = async (startTime, endTime, date, slot, email) => {
 };
   
 
-const updateReservation = async (slot, startTime, endTime, date, email, newSlot, newStartTime, newEndTime) => {
-  if (new Date(newEndTime) <= new Date(newStartTime)) {
+const updateReservation = async (slot, startTime, endTime, date, email, newSlot, newStartTime, newEndTime, newDate) => {
+  if (newEndTime <= newStartTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
+  }
+
+  if(newSlot > Number(process.env.SLOTS)) {
+    throw Boom.badRequest('Invalid slot number');
+  }
+
+  const startTimeComponents = newStartTime.split(':');
+  const startHours = parseInt(startTimeComponents[0]);
+  const startMinutes = parseInt(startTimeComponents[1]);
+  const startSeconds = parseInt(startTimeComponents[2]);
+
+  newDate.setUTCHours(startHours - 5, startMinutes - 30, startSeconds); // IST to UTC
+
+  if(newDate < new Date()) {
+    throw Boom.badRequest('Reservation cannot be made for past dates');
+  }
+
+  // advance reservation can be done only for tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if(newDate > tomorrow) {
+    throw Boom.badRequest('Reservation can be made only for 1 day in advance');
   }
 
   const reservation = await db.Parking.findOne({
@@ -283,24 +324,21 @@ const updateReservation = async (slot, startTime, endTime, date, email, newSlot,
     }
   });
   
-  if (intersectingReservations) {
+  if (intersectingReservations.length > 0) {
     throw Boom.badRequest('Slot already reserved, Please choose another slot');
-  }
-
-  if(newSlot > process.env.SLOTS) {
-    throw Boom.badRequest('Invalid slot number');
   }
 
   reservation.slot = newSlot;
   reservation.startTime = newStartTime;
   reservation.endTime = newEndTime;
+  reservation.date = newDate;
   await reservation.save();
   return reservation; // TODO: return updated reservation
 };
 
 
 const getReservationsOfUser = async (email) => {
-  const reservation = await db.Parking.findOne({
+  const reservation = await db.Parking.findAll({
     where: {
       userEmail: email
     }

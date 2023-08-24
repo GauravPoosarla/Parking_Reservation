@@ -55,10 +55,10 @@ const cancelReservation = async (request, h) => {
 };
 
 const updateReservation = async (request, h) => {
-  const {slot, startTime, endTime, date, newSlot} = request.payload;
+  const {slot, startTime, endTime, date, newSlot, newStartTime, newEndTime, newDate} = request.payload;
   const email = request.user.username;
   try {
-    await parkingServices.updateReservation(slot, startTime, endTime, date, email, newSlot);
+    await parkingServices.updateReservation(slot, startTime, endTime, date, email, newSlot, newStartTime, newEndTime, newDate);
     return h.response().code(204);
   } catch (error) {
     if(Boom.isBoom(error)) {

@@ -25,7 +25,10 @@ const updateReservationPayloadSchema = Joi.object({
   startTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
   endTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
   date: Joi.date().iso().required(),
-  newSlot: Joi.string().required()
+  newSlot: Joi.string().required(),
+  newStartTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
+  newEndTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
+  newDate: Joi.date().iso().required()
 });
 
 const getStatusOfReservationQueryParamSchema = Joi.object({

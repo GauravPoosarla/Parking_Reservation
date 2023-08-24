@@ -52,7 +52,7 @@ async function sendReservationEmail(toEmail, reservationData) {
   const mailOptions = {
     from: process.env.EMAIL,
     to: toEmail,
-    subject: 'Reservation Confirmation',
+    subject: 'Parking Reservation Confirmation',
     html: htmlContent,
   };
 
