@@ -1,5 +1,5 @@
-const amqp = require('amqplib'); // Import the RabbitMQ client library
-const { reserve } = require('../services/parkingService'); // Import your reservation processing logic
+const amqp = require('amqplib');
+const { sendReservationEmail } = require('../utils/emailService');
 
 // Connect to RabbitMQ server
 async function connectToRabbitMQ() {
@@ -18,14 +18,14 @@ async function connectToRabbitMQ() {
         console.log('Received reservation request:', reservationData);
 
         try {
-          // Process the reservation request
-          await reserve(reservationData.slot, reservationData.startTime, reservationData.endTime, reservationData.date, reservationData.email);
-
-          console.log('Reservation processed successfully.');
+          // Process the notify request
+          console.log('Reservation received successfully.');
+          await sendReservationEmail(reservationData.email, reservationData);
+          console.log('Reservation confirmation email sent.');
         } catch (error) {
           console.error('Error processing reservation:', error);
         } finally {
-          channel.ack(msg); // Acknowledge the message
+          channel.ack(msg); 
         }
       }
     });

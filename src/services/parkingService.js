@@ -1,4 +1,5 @@
 const Boom = require('@hapi/boom');
+const amqp = require('amqplib');
 const db = require('../../database/models/index.js');
 
 const reserve = async (slot, startTime, endTime, date, email) => {
@@ -7,7 +8,7 @@ const reserve = async (slot, startTime, endTime, date, email) => {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
-  if(slot > process.env.SLOTS) {
+  if(slot > Number(process.env.SLOTS)) {
     throw Boom.badRequest('Invalid slot number');
   }
 
@@ -86,6 +87,25 @@ const reserve = async (slot, startTime, endTime, date, email) => {
     endTime: endTime,
     userEmail: email,
   });
+
+  const message = JSON.stringify({
+    slot,
+    startTime,
+    endTime,
+    date,
+    email,
+  });
+
+  const connection = await amqp.connect('amqp://localhost');
+  const channel = await connection.createChannel();
+
+  const queueName = 'reservation_queue';
+
+  await channel.assertQueue(queueName);
+  channel.sendToQueue(queueName, Buffer.from(message));
+
+  await channel.close(); 
+  await connection.close();
 
   return newReservation;
 };

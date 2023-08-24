@@ -1,36 +1,12 @@
 const Boom = require('@hapi/boom');
-const amqp = require('amqplib');
 const parkingServices = require('../services/parkingService');
 
 const reserve = async (request, h) => {
   const {slot, startTime, endTime, date} = request.payload;
   const email = request.user.username;
   try {
-    // const reservation = await parkingServices.reserve(slot, startTime, endTime, date, email);
-    // return h.response(reservation).code(201);
-    const message = JSON.stringify({
-      slot,
-      startTime,
-      endTime,
-      date,
-      email,
-    });
-
-    const connection = await amqp.connect('amqp://localhost');
-    const channel = await connection.createChannel();
-
-    const queueName = 'reservation_queue';
-
-    await channel.assertQueue(queueName);
-    channel.sendToQueue(queueName, Buffer.from(message));
-
-    // Wait for ack from RabbitMQ
-    // await new Promise(resolve => channel.waitForConfirms(resolve));
-
-    await channel.close(); // Close the channel
-    await connection.close(); // Close the connection
-
-    return h.response({ message: 'Reservation request submitted for processing.' }).code(201);
+    const reservation = await parkingServices.reserve(slot, startTime, endTime, date, email);
+    return h.response(reservation).code(201);
   } catch (error) {
     if(Boom.isBoom(error)) {
       return error;
