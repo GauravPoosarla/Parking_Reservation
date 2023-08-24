@@ -2,7 +2,6 @@ const Hapi = require('@hapi/hapi');
 require('dotenv').config();
 const routes = require('./src/routes/parkingRouter');
 
-
 const init = async () => {
   const server = Hapi.server({
     port: process.env.PORT || 8080,

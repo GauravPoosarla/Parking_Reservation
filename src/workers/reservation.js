@@ -15,8 +15,6 @@ async function connectToRabbitMQ() {
     channel.consume(queueName, async (msg) => {
       if (msg) {
         const reservationData = JSON.parse(msg.content.toString());
-        console.log('Received reservation request:', reservationData);
-
         try {
           // Process the notify request
           console.log('Reservation received successfully.');
