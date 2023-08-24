@@ -5,6 +5,7 @@ const { google } = require('googleapis');
 const OAuth2 = google.auth.OAuth2;
 
 const createTransporter = async () => {
+  console.log(process.env);
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
@@ -28,7 +29,7 @@ const createTransporter = async () => {
     service: 'gmail',
     auth: {
       type: 'OAuth2',
-      user: 'poosarlagaurav@gmail.com',
+      user: process.env.EMAIL,
       pass: process.env.PASSWORD,
       accessToken,
       clientId: process.env.CLIENT_ID,
@@ -50,7 +51,7 @@ async function sendReservationEmail(toEmail, reservationData) {
   const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime);
 
   const mailOptions = {
-    from: process.env.USER,
+    from: process.env.EMAIL,
     to: toEmail,
     subject: 'Reservation Confirmation',
     html: htmlContent,
