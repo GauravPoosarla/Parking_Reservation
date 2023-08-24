@@ -178,7 +178,7 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
     }
   });
 
-  const allSlots = Array.from(Array(process.env.SLOTS).keys()).map(slot => slot + 1);
+  const allSlots = Array.from(Array(Number(process.env.SLOTS)).keys()).map(slot => slot + 1);
   const reservedSlotNumbers = reservedSlots.map(reservation => reservation.slot);
   const availableSlots = allSlots.filter(slot => !reservedSlotNumbers.includes(slot));
 
