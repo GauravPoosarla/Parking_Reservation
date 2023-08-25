@@ -4,3 +4,4 @@ coverage/
 database/data
 .env
 .vscode/
+dump.rdb
