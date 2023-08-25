@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "77ddcbf8-d3fa-4e03-af7e-51ee9d4fc23e",
+		"name": "Ramp-up Parking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25484873"
+	},
+	"item": [
+		{
+			"name": "Parking Service",
+			"item": [
+				{
+					"name": "Reserve slot",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"slot\": \"19\",\n    \"startTime\": \"23:15:00\",\n    \"endTime\": \"23:45:00\",\n    \"date\": \"2023-08-24\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/reserve",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"reserve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Reservations",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Available Slots",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Reservation",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBvb3NhcmxhZ2F1cmF2QGdtYWlsLmNvbSIsInRpbWVzdGFtcCI6MTY5MjcxOTU4ODMyMCwiaWF0IjoxNjkyNzE5NTg4fQ.nSmiwcYT-flew1GkYxtIWw5E8Aa7L_WsuyZmfVbippM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/cancel-reservation/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"cancel-reservation",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Reservation",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"slot\": \"20\",\n    \"date\": \"2023-08-25\",\n    \"startTime\": \"10:10:00\",\n    \"endTime\": \"10:30:00\",\n    \"newSlot\": \"4\",\n    \"newStartTime\": \"04:00:00\",\n    \"newEndTime\": \"05:00:00\",\n    \"newDate\": \"2023-08-26\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/update-reservation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"update-reservation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reservations of User",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get Status of a Reservation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/get-status-of-reservation?slot=7&startTime=10:30:00&endTime=18:00:00&date=2022-08-25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"get-status-of-reservation"
+							],
+							"query": [
+								{
+									"key": "slot",
+									"value": "7"
+								},
+								{
+									"key": "startTime",
+									"value": "10:30:00"
+								},
+								{
+									"key": "endTime",
+									"value": "18:00:00"
+								},
+								{
+									"key": "date",
+									"value": "2022-08-25"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBvb3NhcmxhZ2F1cmF2QGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwidGltZXN0YW1wIjoxNjkyODcwNDgwMTA5LCJpYXQiOjE2OTI4NzA0ODB9.r29WTNomvMTGCOJN7h9-LrhsJNC7x0IYhvX13lnvFa0",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Parking Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"poosarlagaurav@gmail.com\",\n    \"password\": \"gaurav11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"poosarlagaurav@gmail.com\",\n    \"password\": \"gaurav11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBvb3NhcmxhZ2F1cmF2QGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwidGltZXN0YW1wIjoxNjkyOTU1NzAxMjk1LCJpYXQiOjE2OTI5NTU3MDF9.jraQfMBnwUg_8eFQwBHlx99iWEBiaIVrYqoFdV-gxs4",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/validate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBvb3NhcmxhZ2F1cmF2QGdtYWlsLmNvbSIsInRpbWVzdGFtcCI6MTY5Mjc2NDg2MDQ0MSwiaWF0IjoxNjkyNzY0ODYwfQ.VvNgiZ4kS5rWJaIhUu4x5POJZtEGFpNQZGfw1CJMj0I",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
