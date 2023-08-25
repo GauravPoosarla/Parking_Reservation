@@ -41,10 +41,10 @@ const getAvailableSlotsForTime = async (request, h) => {
 };
 
 const cancelReservation = async (request, h) => {
-  const {startTime, endTime, date, slot} = request.query;
+  const {id} = request.params;
   const email = request.user.username;
   try {
-    await parkingServices.cancelReservation(startTime, endTime, date, slot, email);
+    await parkingServices.cancelReservation(id, email);
     return h.response().code(204);
   } catch (error) {
     if(Boom.isBoom(error)) {

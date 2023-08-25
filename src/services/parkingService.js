@@ -203,13 +203,10 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
   return availableSlots;
 };
 
-const cancelReservation = async (startTime, endTime, date, slot, email) => {
+const cancelReservation = async (id, email) => {
   const reservation = await db.Parking.findOne({
     where: {
-      slot: slot,
-      date: date,
-      startTime: startTime,
-      endTime: endTime,
+      id: id,
       userEmail: email
     }
   });

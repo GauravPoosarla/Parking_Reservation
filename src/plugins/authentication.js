@@ -14,9 +14,8 @@ const validateJWT = async (request, h) => {
     const headers = {
       authorization: token,
     };
-    const result = await axios.post(
+    const result = await axios.get(
       'http://localhost:8080/validate',
-      {},
       { headers: headers }
     );
     if (!result.data) {

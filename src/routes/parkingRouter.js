@@ -29,11 +29,11 @@ const parkingRoutes = [
   },
   {
     method: 'DELETE',
-    path: '/cancel-reservation',
+    path: '/cancel-reservation/{id}',
     handler: parkingController.cancelReservation,
     options: {
       validate: {
-        query: schemas.cancelReservationQueryParamSchema,
+        params: schemas.cancelReservationQueryParamSchema,
       }
     }
   },

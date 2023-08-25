@@ -14,10 +14,7 @@ const timeQueryParamSchema = Joi.object({
 }).options({ stripUnknown: true });
 
 const cancelReservationQueryParamSchema = Joi.object({
-  startTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
-  endTime: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/).required(),
-  date: Joi.date().iso().required(),
-  slot: Joi.string().required()
+  id: Joi.number().required()
 }).options({ stripUnknown: true });
 
 const updateReservationPayloadSchema = Joi.object({
