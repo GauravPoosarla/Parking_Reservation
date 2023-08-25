@@ -6,6 +6,11 @@ const init = async () => {
   const server = Hapi.server({
     port: process.env.PORT || 8080,
     host: process.env.HOST || 'localhost',
+    routes: {
+      cors: {
+        origin: ['*'],
+      },
+    },
   });
 
   await server.register(require('./src/plugins/authentication'));
