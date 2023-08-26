@@ -39,11 +39,12 @@ const parkingRoutes = [
   },
   {
     method: 'PUT',
-    path: '/update-reservation',
+    path: '/update-reservation/{id}',
     handler: parkingController.updateReservation,
     options: {
       validate: {
         payload: schemas.updateReservationPayloadSchema,
+        params: schemas.cancelReservationQueryParamSchema,
       }
     }
   },
