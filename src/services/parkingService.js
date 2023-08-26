@@ -134,6 +134,25 @@ const getAllReservations = async () => {
 };
 
 const getAvailableSlotsForTime = async (startTime, endTime, date) => {
+  const startTimeComponents = startTime.split(':');
+  const startHours = parseInt(startTimeComponents[0]);
+  const startMinutes = parseInt(startTimeComponents[1]);
+  const startSeconds = parseInt(startTimeComponents[2]);
+
+  date.setUTCHours(startHours - 5, startMinutes - 30, startSeconds); // IST to UTC
+
+  if(date < new Date()) {
+    throw Boom.badRequest('Reservation cannot be made for past dates');
+  }
+
+  // advance reservation can be done only for tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if(date > tomorrow) {
+    throw Boom.badRequest('Reservation can be made only for 1 day in advance');
+  }
+
   if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
@@ -220,40 +239,36 @@ const cancelReservation = async (id, email) => {
 };
   
 
-const updateReservation = async (slot, startTime, endTime, date, email, newSlot, newStartTime, newEndTime, newDate) => {
-  if (newEndTime <= newStartTime) {
+const updateReservation = async (slot, startTime, endTime, date, email, id) => {
+  if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
-  if(newSlot > Number(process.env.SLOTS)) {
+  if(slot > Number(process.env.SLOTS)) {
     throw Boom.badRequest('Invalid slot number');
   }
 
-  const startTimeComponents = newStartTime.split(':');
+  const startTimeComponents = startTime.split(':');
   const startHours = parseInt(startTimeComponents[0]);
   const startMinutes = parseInt(startTimeComponents[1]);
   const startSeconds = parseInt(startTimeComponents[2]);
 
-  newDate.setUTCHours(startHours - 5, startMinutes - 30, startSeconds); // IST to UTC
+  date.setUTCHours(startHours - 5, startMinutes - 30, startSeconds); // IST to UTC
 
-  if(newDate < new Date()) {
+  if(date < new Date()) {
     throw Boom.badRequest('Reservation cannot be made for past dates');
   }
 
-  // advance reservation can be done only for tomorrow
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  if(newDate > tomorrow) {
+  if(date > tomorrow) {
     throw Boom.badRequest('Reservation can be made only for 1 day in advance');
   }
 
   const reservation = await db.Parking.findOne({
     where: {
-      slot: slot,
-      date: date,
-      startTime: startTime,
-      endTime: endTime,
+      id: id,
       userEmail: email
     }
   });
@@ -266,7 +281,7 @@ const updateReservation = async (slot, startTime, endTime, date, email, newSlot,
     attributes: ['slot'],
     where: {
       date: date,
-      slot: newSlot,
+      slot: slot,
       [db.Sequelize.Op.and]: [
         {
           [db.Sequelize.Op.or]: [
@@ -325,10 +340,10 @@ const updateReservation = async (slot, startTime, endTime, date, email, newSlot,
     throw Boom.badRequest('Slot already reserved, Please choose another slot');
   }
 
-  reservation.slot = newSlot;
-  reservation.startTime = newStartTime;
-  reservation.endTime = newEndTime;
-  reservation.date = newDate;
+  reservation.slot = slot;
+  reservation.startTime = startTime;
+  reservation.endTime = endTime;
+  reservation.date = date;
   await reservation.save();
   return reservation; // TODO: return updated reservation
 };
