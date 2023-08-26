@@ -1,5 +1,5 @@
 const amqp = require('amqplib');
-const { sendReservationEmail } = require('../utils/emailService');
+const { sendReservationEmail, sendUpdationEmail, sendCancellationEmail } = require('../utils/emailService');
 
 // Connect to RabbitMQ server
 async function connectToRabbitMQ() {
@@ -14,16 +14,32 @@ async function connectToRabbitMQ() {
 
     channel.consume(queueName, async (msg) => {
       if (msg) {
-        const reservationData = JSON.parse(msg.content.toString());
+        const messageData = JSON.parse(msg.content.toString());
         try {
-          // Process the notify request
           console.log('Reservation received successfully.');
-          await sendReservationEmail(reservationData.email, reservationData);
-          console.log('Reservation confirmation email sent.');
+          if (messageData.type === 'reservation') {
+            await sendReservationEmail(messageData.data.email, messageData.data);
+            console.log('Reservation confirmation email sent.');
+          }
+          else if(messageData.type === 'update') {
+            await sendUpdationEmail(messageData.data.email, messageData.data);
+            console.log('Reservation update email sent.');
+          }
+          else if (messageData.type === 'cancellation') {
+            await sendCancellationEmail(messageData.data.email, messageData.data);
+            console.log('Reservation cancellation email sent.');
+          }
+          channel.ack(msg); 
         } catch (error) {
           console.error('Error processing reservation:', error);
-        } finally {
-          channel.ack(msg); 
+          // Retry logic
+          if (msg.fields.deliveryTag < 3) {
+            console.log('Retrying...');
+            channel.nack(msg);
+          } else {
+            console.log('Max retries reached. Discarding message.');
+            channel.ack(msg);
+          }
         }
       }
     });
