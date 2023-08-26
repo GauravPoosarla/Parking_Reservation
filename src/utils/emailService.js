@@ -47,7 +47,7 @@ async function sendReservationEmail(toEmail, reservationData) {
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = dateObj.toLocaleDateString('en-US', options);
    
-  const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime);
+  const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime, 'reservation');
 
   const mailOptions = {
     from: process.env.EMAIL,
@@ -64,8 +64,65 @@ async function sendReservationEmail(toEmail, reservationData) {
   }
 }
 
-function generateEmailTemplate(slot, formattedDate, startTime, endTime) {
-  const emailTemplate = fs.readFileSync('./src/utils/common/template.html', 'utf-8');
+async function sendUpdationEmail(toEmail, reservationData) {
+  const { slot, startTime, endTime, date } = reservationData;
+  let emailTransporter = await createTransporter();
+  const dateObj = new Date(date);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+  const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime, 'update');
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: toEmail,
+    subject: 'Parking Reservation Update',
+    html: htmlContent,
+  };
+
+  try {
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('Email sent:', info.response);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
+
+async function sendCancellationEmail(toEmail, reservationData) {
+  const { slot, startTime, endTime, date } = reservationData;
+  let emailTransporter = await createTransporter();
+  const dateObj = new Date(date);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+  const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime, 'cancellation');
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: toEmail,
+    subject: 'Parking Reservation Cancellation',
+    html: htmlContent,
+  };
+
+  try {
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('Email sent:', info.response);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
+
+function generateEmailTemplate(slot, formattedDate, startTime, endTime, type) {
+  let emailTemplate;
+  if(type === 'reservation') {
+    emailTemplate = fs.readFileSync('./src/utils/common/reservation.html', { encoding: 'utf-8' });
+  }
+  else if(type === 'update') {
+    emailTemplate = fs.readFileSync('./src/utils/common/update.html', { encoding: 'utf-8' });
+  }
+  else if(type === 'cancellation') {
+    emailTemplate = fs.readFileSync('./src/utils/common/cancellation.html', { encoding: 'utf-8' });
+  }
     
   const placeholders = {
     slot: slot,
@@ -80,5 +137,7 @@ function generateEmailTemplate(slot, formattedDate, startTime, endTime) {
 }
 
 module.exports = {
-  sendReservationEmail
+  sendReservationEmail,
+  sendUpdationEmail,
+  sendCancellationEmail
 };

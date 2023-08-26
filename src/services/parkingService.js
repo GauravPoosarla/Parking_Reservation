@@ -107,11 +107,14 @@ const reserve = async (slot, startTime, endTime, date, email) => {
   });
 
   const message = JSON.stringify({
-    slot,
-    startTime,
-    endTime,
-    date,
-    email,
+    type: 'reservation',
+    data: {
+      slot,
+      startTime,
+      endTime,
+      date,
+      email,
+    },
   });
 
   const connection = await amqp.connect('amqp://localhost');
@@ -234,6 +237,29 @@ const cancelReservation = async (id, email) => {
     throw Boom.notFound('Reservation not found');
   }
 
+  const { slot, startTime, endTime, date } = reservation;
+  const message = JSON.stringify({
+    type: 'cancellation',
+    data: {
+      slot,
+      startTime,
+      endTime,
+      date,
+      email,
+    },
+  });
+
+  const connection = await amqp.connect('amqp://localhost');
+  const channel = await connection.createChannel();
+
+  const queueName = 'reservation_queue';
+
+  await channel.assertQueue(queueName);
+  channel.sendToQueue(queueName, Buffer.from(message));
+
+  await channel.close(); 
+  await connection.close();
+
   const deletedReservation = await reservation.destroy();
   return deletedReservation; // TODO: return deleted reservation
 };
@@ -345,6 +371,28 @@ const updateReservation = async (slot, startTime, endTime, date, email, id) => {
   reservation.endTime = endTime;
   reservation.date = date;
   await reservation.save();
+
+  const message = JSON.stringify({
+    type: 'update',
+    data: {
+      slot,
+      startTime,
+      endTime,
+      date,
+      email,
+    },
+  });
+
+  const connection = await amqp.connect('amqp://localhost');
+  const channel = await connection.createChannel();
+
+  const queueName = 'reservation_queue';
+
+  await channel.assertQueue(queueName);
+  channel.sendToQueue(queueName, Buffer.from(message));
+
+  await channel.close(); 
+  await connection.close();
   return reservation; // TODO: return updated reservation
 };
 
