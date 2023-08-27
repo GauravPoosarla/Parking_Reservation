@@ -3,6 +3,14 @@ const amqp = require('amqplib');
 const db = require('../../database/models/index.js');
 
 const reserve = async (slot, startTime, endTime, date, email) => {
+  if (endTime <= startTime) {
+    throw Boom.badRequest('End time cannot be before or equal to start time.');
+  }
+
+  if(slot > Number(process.env.SLOTS)) {
+    throw Boom.badRequest('Invalid slot number');
+  }
+  
   const startTimeComponents = startTime.split(':');
   const startHours = parseInt(startTimeComponents[0]);
   const startMinutes = parseInt(startTimeComponents[1]);
@@ -20,14 +28,6 @@ const reserve = async (slot, startTime, endTime, date, email) => {
 
   if(date > tomorrow) {
     throw Boom.badRequest('Reservation can be made only for 1 day in advance');
-  }
-
-  if (endTime <= startTime) {
-    throw Boom.badRequest('End time cannot be before or equal to start time.');
-  }
-
-  if(slot > Number(process.env.SLOTS)) {
-    throw Boom.badRequest('Invalid slot number');
   }
 
   // Intersections:
@@ -137,13 +137,14 @@ const getAllReservations = async () => {
 };
 
 const getAvailableSlotsForTime = async (startTime, endTime, date) => {
+  if (endTime <= startTime) {
+    throw Boom.badRequest('End time cannot be before or equal to start time.');
+  }
   const startTimeComponents = startTime.split(':');
   const startHours = parseInt(startTimeComponents[0]);
   const startMinutes = parseInt(startTimeComponents[1]);
   const startSeconds = parseInt(startTimeComponents[2]);
-
   date.setUTCHours(startHours - 5, startMinutes - 30, startSeconds); // IST to UTC
-
   if(date < new Date()) {
     throw Boom.badRequest('Reservation cannot be made for past dates');
   }
@@ -154,10 +155,6 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
 
   if(date > tomorrow) {
     throw Boom.badRequest('Reservation can be made only for 1 day in advance');
-  }
-
-  if (endTime <= startTime) {
-    throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
   const reservedSlots = await db.Parking.findAll({
