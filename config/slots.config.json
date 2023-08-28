@@ -1,80 +1,124 @@
 {
-    "slots": [
-      {
-        "id": "A1",
-        "name": "A",
-        "level": 1
-      },
-      {
-        "id": "A2",
-        "name": "A",
-        "level": 2
-      },
-      {
-        "id": "A3",
-        "name": "A",
-        "level": 3
-      },
-      {
-        "id": "B1",
-        "name": "B",
-        "level": 1
-      },
-      {
-        "id": "B2",
-        "name": "B",
-        "level": 2
-      },
-      {
-        "id": "B3",
-        "name": "B",
-        "level": 3
-      },
-      {
-        "id": "C1",
-        "name": "C",
-        "level": 1
-      },
-      {
-        "id": "C2",
-        "name": "C",
-        "level": 2
-      },
-      {
-        "id": "C3",
-        "name": "C",
-        "level": 3
-      },
-      {
-        "id": "D1",
-        "name": "D",
-        "level": 1
-      },
-      {
-        "id": "D2",
-        "name": "D",
-        "level": 2
-      },
-      {
-        "id": "D3",
-        "name": "D",
-        "level": 3
-      },
-      {
-        "id": "E1",
-        "name": "E",
-        "level": 1
-      },
-      {
-        "id": "E2",
-        "name": "E",
-        "level": 2
-      },
-      {
-        "id": "E3",
-        "name": "E",
-        "level": 3
-      }
-    ]
-  }
-  
+  "slots": [
+    {
+      "id": "A1",
+      "name": "A1",
+      "level": 1
+    },
+    {
+      "id": "A2",
+      "name": "A2",
+      "level": 2
+    },
+    {
+      "id": "A3",
+      "name": "A3",
+      "level": 3
+    },
+    {
+      "id": "B1",
+      "name": "B1",
+      "level": 1
+    },
+    {
+      "id": "B2",
+      "name": "B2",
+      "level": 2
+    },
+    {
+      "id": "B3",
+      "name": "B3",
+      "level": 3
+    },
+    {
+      "id": "C1",
+      "name": "C1",
+      "level": 1
+    },
+    {
+      "id": "C2",
+      "name": "C2",
+      "level": 2
+    },
+    {
+      "id": "C3",
+      "name": "C3",
+      "level": 3
+    },
+    {
+      "id": "D1",
+      "name": "D1",
+      "level": 1
+    },
+    {
+      "id": "D2",
+      "name": "D2",
+      "level": 2
+    },
+    {
+      "id": "D3",
+      "name": "D3",
+      "level": 3
+    },
+    {
+      "id": "E1",
+      "name": "E1",
+      "level": 1
+    },
+    {
+      "id": "E2",
+      "name": "E2",
+      "level": 2
+    },
+    {
+      "id": "E3",
+      "name": "E3",
+      "level": 3
+    },
+    {
+      "id": "F1",
+      "name": "F1",
+      "level": 1
+    },
+    {
+      "id": "F2",
+      "name": "F2",
+      "level": 2
+    },
+    {
+      "id": "F3",
+      "name": "F3",
+      "level": 3
+    },
+    {
+      "id": "G1",
+      "name": "G1",
+      "level": 1
+    },
+    {
+      "id": "G2",
+      "name": "G2",
+      "level": 2
+    },
+    {
+      "id": "G3",
+      "name": "G3",
+      "level": 3
+    },
+    {
+      "id": "H1",
+      "name": "H1",
+      "level": 1
+    },
+    {
+      "id": "H2",
+      "name": "H2",
+      "level": 2
+    },
+    {
+      "id": "H3",
+      "name": "H3",
+      "level": 3
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 const Hapi = require('@hapi/hapi');
-require('dotenv').config();
 const routes = require('./src/routes/parkingRouter');
+const fileWatcher = require('./config/fileWatcher');
+require('dotenv').config();
 
 const init = async () => {
   const server = Hapi.server({
@@ -12,6 +13,8 @@ const init = async () => {
       },
     },
   });
+
+  fileWatcher.watchConfigFile();
 
   await server.register(require('./src/plugins/authentication'));
   await server.register({
