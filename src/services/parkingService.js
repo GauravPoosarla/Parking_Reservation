@@ -1,12 +1,14 @@
 const Boom = require('@hapi/boom');
 const amqp = require('amqplib');
 const db = require('../../database/models/index.js');
-const slotConfig = require('../../config/slots.config.json');
+const qrcode = require('qrcode');
+const slotConfigService = require('./slotConfigService');
 
 const reserve = async (userSlot, startTime, endTime, date, email) => {
   if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
+  const slotConfig = slotConfigService.readSlotConfig();
 
   const validSlotIds = slotConfig.slots.map(slot => slot.id);
   if (!validSlotIds.includes(userSlot)) {
@@ -38,7 +40,6 @@ const reserve = async (userSlot, startTime, endTime, date, email) => {
   // 3. endTime >= endTime && (startTime >= startTime && startTime <= endTime)
 
   const intersectingReservations = await db.Parking.findAll({
-    attributes: ['slot'],
     where: {
       date: date,
       slot: userSlot,
@@ -109,6 +110,8 @@ const reserve = async (userSlot, startTime, endTime, date, email) => {
     userEmail: email,
   });
 
+  const qrCode = await qrcode.toDataURL(JSON.stringify(newReservation));
+  const qrCodeImage = qrCode.split(',')[1];
   const message = JSON.stringify({
     type: 'reservation',
     data: {
@@ -117,6 +120,7 @@ const reserve = async (userSlot, startTime, endTime, date, email) => {
       endTime,
       date,
       email,
+      qrCodeImage,
     },
   });
 
@@ -143,6 +147,10 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
   if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
+
+  const slotConfig = slotConfigService.readSlotConfig();
+  console.log(slotConfig);
+
   const startTimeComponents = startTime.split(':');
   const startHours = parseInt(startTimeComponents[0]);
   const startMinutes = parseInt(startTimeComponents[1]);
@@ -161,7 +169,6 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
   }
 
   const reservedSlots = await db.Parking.findAll({
-    attributes: ['slot'],
     where: {
       date: date,
       [db.Sequelize.Op.and]: [
@@ -219,7 +226,7 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
   });
 
   const allSlots = slotConfig.slots.map(slot => slot.id);
-  const reservedSlotNumbers = reservedSlots.map(reservation => reservation.slot);
+  const reservedSlotNumbers = reservedSlots.map(slot => slot.slot);
   const availableSlots = allSlots.filter(slot => !reservedSlotNumbers.includes(slot));
 
   return availableSlots;
@@ -270,6 +277,8 @@ const updateReservation = async (userSlot, startTime, endTime, date, email, id) 
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
+  const slotConfig = slotConfigService.readSlotConfig();
+
   const validSlotIds = slotConfig.slots.map(slot => slot.id);
   if (!validSlotIds.includes(userSlot)) {
     throw Boom.badRequest('Invalid slot number');
@@ -305,7 +314,6 @@ const updateReservation = async (userSlot, startTime, endTime, date, email, id) 
   }
 
   const intersectingReservations = await db.Parking.findAll({
-    attributes: ['slot'],
     where: {
       date: date,
       slot: userSlot,
@@ -375,6 +383,9 @@ const updateReservation = async (userSlot, startTime, endTime, date, email, id) 
   reservation.date = date;
   await reservation.save();
 
+  const qrCode = await qrcode.toDataURL(JSON.stringify(reservation));
+  const qrCodeImage = qrCode.split(',')[1];
+
   const message = JSON.stringify({
     type: 'update',
     data: {
@@ -383,6 +394,7 @@ const updateReservation = async (userSlot, startTime, endTime, date, email, id) 
       endTime,
       date,
       email,
+      qrCodeImage,
     },
   });
 

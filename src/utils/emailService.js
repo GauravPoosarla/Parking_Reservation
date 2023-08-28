@@ -41,7 +41,7 @@ const createTransporter = async () => {
 };
 
 async function sendReservationEmail(toEmail, reservationData) {
-  const { slot, startTime, endTime, date } = reservationData;
+  const { slot, startTime, endTime, date, qrCodeImage } = reservationData;
   let emailTransporter = await createTransporter();
   const dateObj = new Date(date);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -54,6 +54,12 @@ async function sendReservationEmail(toEmail, reservationData) {
     to: toEmail,
     subject: 'Parking Reservation Confirmation',
     html: htmlContent,
+    attachments: [{
+      filename: 'qr-code.png',
+      content: qrCodeImage,
+      encoding: 'base64',
+      cid: 'qrCodeImage'
+    }]
   };
 
   try {
@@ -65,7 +71,7 @@ async function sendReservationEmail(toEmail, reservationData) {
 }
 
 async function sendUpdationEmail(toEmail, reservationData) {
-  const { slot, startTime, endTime, date } = reservationData;
+  const { slot, startTime, endTime, date, qrCodeImage } = reservationData;
   let emailTransporter = await createTransporter();
   const dateObj = new Date(date);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -78,6 +84,12 @@ async function sendUpdationEmail(toEmail, reservationData) {
     to: toEmail,
     subject: 'Parking Reservation Update',
     html: htmlContent,
+    attachments: [{
+      filename: 'qr-code.png',
+      content: qrCodeImage,
+      encoding: 'base64',
+      cid: 'qrCodeImage'
+    }]
   };
 
   try {
