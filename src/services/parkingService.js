@@ -425,6 +425,44 @@ const getStatusOfReservation = async (slot, startTime, endTime, date) => {
   return reservation;
 };
 
+const deleteReservationAdmin = async (id) => {
+  const reservation = await db.Parking.findOne({
+    where: {
+      id: id
+    }
+  });
+
+  if (!reservation) {
+    throw Boom.notFound('Reservation not found');
+  }
+
+  const { slot, startTime, endTime, date, userEmail } = reservation;
+  const message = JSON.stringify({
+    type: 'cancellation-admin',
+    data: {
+      slot,
+      startTime,
+      endTime,
+      date,
+      email: userEmail,
+    },
+  });
+
+  const connection = await amqp.connect('amqp://localhost');
+  const channel = await connection.createChannel();
+
+  const queueName = 'reservation_queue';
+
+  await channel.assertQueue(queueName);
+  channel.sendToQueue(queueName, Buffer.from(message));
+
+  await channel.close(); 
+  await connection.close();
+
+  const deletedReservation = await reservation.destroy();
+  return deletedReservation; // TODO: return deleted reservation
+};
+
 module.exports = {
   reserve,
   getAllReservations,
@@ -432,5 +470,6 @@ module.exports = {
   cancelReservation,
   updateReservation,
   getReservationsOfUser,
-  getStatusOfReservation
+  getStatusOfReservation,
+  deleteReservationAdmin
 };

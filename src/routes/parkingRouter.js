@@ -62,6 +62,16 @@ const parkingRoutes = [
         query: schemas.getStatusOfReservationQueryParamSchema,
       }
     }
+  },
+  {
+    method: 'DELETE',
+    path: '/delete-reservation-admin/{id}',
+    handler: parkingController.deleteReservationAdmin,
+    options: {
+      validate: {
+        params: schemas.cancelReservationQueryParamSchema,
+      }
+    }
   }
 ];
 

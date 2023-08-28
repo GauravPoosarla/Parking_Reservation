@@ -112,6 +112,30 @@ async function sendCancellationEmail(toEmail, reservationData) {
   }
 }
 
+async function sendAdminCancellationEmail(toEmail, reservationData) {
+  const { slot, startTime, endTime, date } = reservationData;
+  let emailTransporter = await createTransporter();
+  const dateObj = new Date(date);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+  const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime, 'cancellation-admin');
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: toEmail,
+    subject: 'Parking Reservation Cancellation',
+    html: htmlContent,
+  };
+
+  try {
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('Email sent:', info.response);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
+
 function generateEmailTemplate(slot, formattedDate, startTime, endTime, type) {
   let emailTemplate;
   if(type === 'reservation') {
@@ -122,6 +146,9 @@ function generateEmailTemplate(slot, formattedDate, startTime, endTime, type) {
   }
   else if(type === 'cancellation') {
     emailTemplate = fs.readFileSync('./src/utils/common/cancellation.html', { encoding: 'utf-8' });
+  }
+  else if(type === 'cancellation-admin') {
+    emailTemplate = fs.readFileSync('./src/utils/common/cancellation-admin.html', { encoding: 'utf-8' });
   }
     
   const placeholders = {
@@ -139,5 +166,6 @@ function generateEmailTemplate(slot, formattedDate, startTime, endTime, type) {
 module.exports = {
   sendReservationEmail,
   sendUpdationEmail,
-  sendCancellationEmail
+  sendCancellationEmail,
+  sendAdminCancellationEmail
 };

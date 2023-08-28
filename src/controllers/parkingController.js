@@ -95,6 +95,19 @@ const getStatusOfReservation = async (request, h) => {
   }
 };
 
+const deleteReservationAdmin = async (request, h) => {
+  const {id} = request.params;
+  try {
+    await parkingServices.deleteReservationAdmin(id);
+    return h.response().code(204);
+  } catch (error) {
+    if(Boom.isBoom(error)) {
+      return error;
+    }
+    return Boom.badImplementation(error);
+  }
+};
+
 module.exports = {
   reserve,
   getAllReservations,
@@ -103,4 +116,5 @@ module.exports = {
   updateReservation,
   getReservationsOfUser,
   getStatusOfReservation,
+  deleteReservationAdmin,
 };

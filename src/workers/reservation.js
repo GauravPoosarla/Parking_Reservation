@@ -1,5 +1,5 @@
 const amqp = require('amqplib');
-const { sendReservationEmail, sendUpdationEmail, sendCancellationEmail } = require('../utils/emailService');
+const { sendReservationEmail, sendUpdationEmail, sendCancellationEmail, sendAdminCancellationEmail } = require('../utils/emailService');
 
 // Connect to RabbitMQ server
 async function connectToRabbitMQ() {
@@ -28,6 +28,10 @@ async function connectToRabbitMQ() {
           else if (messageData.type === 'cancellation') {
             await sendCancellationEmail(messageData.data.email, messageData.data);
             console.log('Reservation cancellation email sent.');
+          }
+          else if(messageData.type === 'cancellation-admin') {
+            await sendAdminCancellationEmail(messageData.data.email, messageData.data);
+            console.log('Reservation cancelled by admin, email sent');
           }
           channel.ack(msg); 
         } catch (error) {

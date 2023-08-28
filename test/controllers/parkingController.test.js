@@ -1,6 +1,5 @@
 const controller = require('../../src/controllers/parkingController');
 const parkingServices = require('../../src/services/parkingService');
-const Boom = require('@hapi/boom');
 
 describe('parkingController', () => {
   describe('reserve', () => {
@@ -367,6 +366,47 @@ describe('parkingController', () => {
   
       expect(result.isBoom).toBe(true);
       expect(result.output.statusCode).toBe(500);
+    });
+  });
+
+  describe('deleteReservationAdmin', () => {
+    it('should delete a reservation successfully', async () => {
+      const mockRequest = {
+        params: {
+          id: '12345',
+        },
+      };
+      const mockH = {
+        response: jest.fn().mockReturnThis(),
+        code: jest.fn(),
+      };
+
+      jest.spyOn(parkingServices, 'deleteReservationAdmin').mockResolvedValue();
+
+      await controller.deleteReservationAdmin(mockRequest, mockH);
+
+      expect(mockH.code).toHaveBeenCalledWith(204);
+    });
+
+    it('should return a Boom error on failure', async () => {
+      const mockRequest = {
+        params: {
+          id: '12345',
+        },
+      };
+      const mockH = {
+        response: jest.fn().mockReturnThis(),
+        code: jest.fn(),
+      };
+
+      const errorMessage = 'Failed to delete reservation';
+      jest.spyOn(parkingServices, 'deleteReservationAdmin').mockRejectedValue(new Error(errorMessage));
+
+      const result = await controller.deleteReservationAdmin(mockRequest, mockH);
+
+      expect(result.isBoom).toBe(true);
+      expect(result.output.statusCode).toBe(500);
+      expect(result.message).toBe(errorMessage);
     });
   });
 });
