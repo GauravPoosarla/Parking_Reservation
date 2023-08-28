@@ -1,0 +1,80 @@
+{
+    "slots": [
+      {
+        "id": "A1",
+        "name": "A",
+        "level": 1
+      },
+      {
+        "id": "A2",
+        "name": "A",
+        "level": 2
+      },
+      {
+        "id": "A3",
+        "name": "A",
+        "level": 3
+      },
+      {
+        "id": "B1",
+        "name": "B",
+        "level": 1
+      },
+      {
+        "id": "B2",
+        "name": "B",
+        "level": 2
+      },
+      {
+        "id": "B3",
+        "name": "B",
+        "level": 3
+      },
+      {
+        "id": "C1",
+        "name": "C",
+        "level": 1
+      },
+      {
+        "id": "C2",
+        "name": "C",
+        "level": 2
+      },
+      {
+        "id": "C3",
+        "name": "C",
+        "level": 3
+      },
+      {
+        "id": "D1",
+        "name": "D",
+        "level": 1
+      },
+      {
+        "id": "D2",
+        "name": "D",
+        "level": 2
+      },
+      {
+        "id": "D3",
+        "name": "D",
+        "level": 3
+      },
+      {
+        "id": "E1",
+        "name": "E",
+        "level": 1
+      },
+      {
+        "id": "E2",
+        "name": "E",
+        "level": 2
+      },
+      {
+        "id": "E3",
+        "name": "E",
+        "level": 3
+      }
+    ]
+  }
+  

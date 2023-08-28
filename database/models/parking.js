@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     endTime: DataTypes.TIME,
     date: DataTypes.DATEONLY,
     userEmail: DataTypes.STRING,
-    slot: DataTypes.INTEGER,
+    slot: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Parking',

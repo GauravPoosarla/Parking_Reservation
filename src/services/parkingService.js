@@ -1,13 +1,15 @@
 const Boom = require('@hapi/boom');
 const amqp = require('amqplib');
 const db = require('../../database/models/index.js');
+const slotConfig = require('../../config/slots.config.json');
 
-const reserve = async (slot, startTime, endTime, date, email) => {
+const reserve = async (userSlot, startTime, endTime, date, email) => {
   if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
-  if(slot > Number(process.env.SLOTS)) {
+  const validSlotIds = slotConfig.slots.map(slot => slot.id);
+  if (!validSlotIds.includes(userSlot)) {
     throw Boom.badRequest('Invalid slot number');
   }
   
@@ -39,7 +41,7 @@ const reserve = async (slot, startTime, endTime, date, email) => {
     attributes: ['slot'],
     where: {
       date: date,
-      slot: slot,
+      slot: userSlot,
       [db.Sequelize.Op.and]: [
         {
           [db.Sequelize.Op.or]: [
@@ -98,8 +100,9 @@ const reserve = async (slot, startTime, endTime, date, email) => {
     throw Boom.badRequest('Slot already reserved, Please choose another slot');
   }
 
+  const selectedSlot = slotConfig.slots.find(slot => userSlot === slot.id);
   const newReservation = await db.Parking.create({
-    slot: slot,
+    slot: selectedSlot.id,
     date: date,
     startTime: startTime,
     endTime: endTime,
@@ -109,7 +112,7 @@ const reserve = async (slot, startTime, endTime, date, email) => {
   const message = JSON.stringify({
     type: 'reservation',
     data: {
-      slot,
+      slot: selectedSlot.id,
       startTime,
       endTime,
       date,
@@ -215,7 +218,7 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
     }
   });
 
-  const allSlots = Array.from(Array(Number(process.env.SLOTS)).keys()).map(slot => slot + 1);
+  const allSlots = slotConfig.slots.map(slot => slot.id);
   const reservedSlotNumbers = reservedSlots.map(reservation => reservation.slot);
   const availableSlots = allSlots.filter(slot => !reservedSlotNumbers.includes(slot));
 
@@ -262,12 +265,13 @@ const cancelReservation = async (id, email) => {
 };
   
 
-const updateReservation = async (slot, startTime, endTime, date, email, id) => {
+const updateReservation = async (userSlot, startTime, endTime, date, email, id) => {
   if (endTime <= startTime) {
     throw Boom.badRequest('End time cannot be before or equal to start time.');
   }
 
-  if(slot > Number(process.env.SLOTS)) {
+  const validSlotIds = slotConfig.slots.map(slot => slot.id);
+  if (!validSlotIds.includes(userSlot)) {
     throw Boom.badRequest('Invalid slot number');
   }
 
@@ -304,7 +308,7 @@ const updateReservation = async (slot, startTime, endTime, date, email, id) => {
     attributes: ['slot'],
     where: {
       date: date,
-      slot: slot,
+      slot: userSlot,
       [db.Sequelize.Op.and]: [
         {
           [db.Sequelize.Op.or]: [
@@ -363,7 +367,9 @@ const updateReservation = async (slot, startTime, endTime, date, email, id) => {
     throw Boom.badRequest('Slot already reserved, Please choose another slot');
   }
 
-  reservation.slot = slot;
+  const selectedSlot = slotConfig.slots.find(slot => userSlot === slot.id);
+
+  reservation.slot = selectedSlot.id;
   reservation.startTime = startTime;
   reservation.endTime = endTime;
   reservation.date = date;
@@ -372,7 +378,7 @@ const updateReservation = async (slot, startTime, endTime, date, email, id) => {
   const message = JSON.stringify({
     type: 'update',
     data: {
-      slot,
+      slot: selectedSlot.id,
       startTime,
       endTime,
       date,

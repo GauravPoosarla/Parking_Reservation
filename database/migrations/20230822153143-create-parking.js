@@ -22,7 +22,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       slot: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
