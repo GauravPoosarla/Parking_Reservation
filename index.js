@@ -11,7 +11,7 @@ const init = async () => {
       cors: {
         origin: ['*'],
       },
-    },
+    },    
   });
 
   fileWatcher.watchConfigFile();

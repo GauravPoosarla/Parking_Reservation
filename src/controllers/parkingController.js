@@ -108,6 +108,19 @@ const deleteReservationAdmin = async (request, h) => {
   }
 };
 
+const verifyQR = async (request, h) => {
+  const {slot, startTime, endTime, date} = request.payload;
+  try {
+    const reservation = await parkingServices.verifyQR(slot, startTime, endTime, date);
+    return h.response(reservation).code(200);
+  } catch (error) {
+    if(Boom.isBoom(error)) {
+      return error;
+    }
+    return Boom.badImplementation(error);
+  }
+};
+
 module.exports = {
   reserve,
   getAllReservations,
@@ -117,4 +130,5 @@ module.exports = {
   getReservationsOfUser,
   getStatusOfReservation,
   deleteReservationAdmin,
+  verifyQR
 };

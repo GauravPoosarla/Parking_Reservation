@@ -481,6 +481,23 @@ const deleteReservationAdmin = async (id) => {
   return deletedReservation; // TODO: return deleted reservation
 };
 
+const verifyQR = async (slot, startTime, endTime, date) => {
+  const reservation = await db.Parking.findOne({
+    where: {
+      slot: slot,
+      date: date,
+      startTime: startTime,
+      endTime: endTime
+    }
+  });
+
+  if (!reservation) {
+    return 'Reservation not found';
+  }
+
+  return reservation;
+};
+
 module.exports = {
   reserve,
   getAllReservations,
@@ -489,5 +506,6 @@ module.exports = {
   updateReservation,
   getReservationsOfUser,
   getStatusOfReservation,
-  deleteReservationAdmin
+  deleteReservationAdmin,
+  verifyQR
 };

@@ -72,6 +72,11 @@ const parkingRoutes = [
         params: schemas.cancelReservationQueryParamSchema,
       }
     }
+  },
+  {
+    method: 'POST',
+    path: '/verify-qr',
+    handler: parkingController.verifyQR,
   }
 ];
 
