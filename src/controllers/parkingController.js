@@ -83,9 +83,9 @@ const getReservationsOfUser = async (request, h) => {
 };
 
 const getStatusOfReservation = async (request, h) => {
-  const {slot, startTime, endTime, date} = request.query;
+  const id = request.params.id;
   try {
-    const reservation = await parkingServices.getStatusOfReservation(slot, startTime, endTime, date);
+    const reservation = await parkingServices.getStatusOfReservation(id);
     return h.response(reservation).code(200);
   } catch (error) {
     if(Boom.isBoom(error)) {

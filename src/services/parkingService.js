@@ -426,13 +426,10 @@ const getReservationsOfUser = async (email) => {
   return reservation;
 };
 
-const getStatusOfReservation = async (slot, startTime, endTime, date) => {
+const getStatusOfReservation = async (id) => {
   const reservation = await db.Parking.findOne({
     where: {
-      slot: slot,
-      date: date,
-      startTime: startTime,
-      endTime: endTime
+      id: id
     }
   });
 

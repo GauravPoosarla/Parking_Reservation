@@ -55,11 +55,11 @@ const parkingRoutes = [
   },
   {
     method: 'GET',
-    path: '/get-status-of-reservation',
+    path: '/get-status-of-reservation/{id}',
     handler: parkingController.getStatusOfReservation,
     options: {
       validate: {
-        query: schemas.getStatusOfReservationQueryParamSchema,
+        params: schemas.cancelReservationQueryParamSchema,
       }
     }
   },
