@@ -29,7 +29,6 @@ const createTransporter = async () => {
     auth: {
       type: 'OAuth2',
       user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
       accessToken,
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
