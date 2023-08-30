@@ -18,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     endTime: DataTypes.TIME,
     date: DataTypes.DATEONLY,
     userEmail: DataTypes.STRING,
-    slot: DataTypes.STRING
+    slot: DataTypes.STRING,
+    parkingStatus: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Parking',

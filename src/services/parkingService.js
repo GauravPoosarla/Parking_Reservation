@@ -108,6 +108,7 @@ const reserve = async (userSlot, startTime, endTime, date, email) => {
     startTime: startTime,
     endTime: endTime,
     userEmail: email,
+    parkingStatus: false
   });
 
   const qrCode = await qrcode.toDataURL(JSON.stringify(newReservation));
@@ -149,7 +150,6 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
   }
 
   const slotConfig = slotConfigService.readSlotConfig();
-  console.log(slotConfig);
 
   const startTimeComponents = startTime.split(':');
   const startHours = parseInt(startTimeComponents[0]);
@@ -492,6 +492,8 @@ const verifyQR = async (slot, startTime, endTime, date) => {
     return 'Reservation not found';
   }
 
+  reservation.parkingStatus = true;
+  await reservation.save();
   return reservation;
 };
 

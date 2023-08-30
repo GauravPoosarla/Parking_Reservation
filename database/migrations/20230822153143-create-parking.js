@@ -24,6 +24,9 @@ module.exports = {
       slot: {
         type: Sequelize.STRING
       },
+      parkingStatus: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
