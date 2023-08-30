@@ -16,6 +16,46 @@
       "level": 3
     },
     {
+      "id": "A4",
+      "name": "A4",
+      "level": 1
+    },
+    {
+      "id": "A5",
+      "name": "A5",
+      "level": 2
+    },
+    {
+      "id": "A6",
+      "name": "A6",
+      "level": 3
+    },
+    {
+      "id": "A7",
+      "name": "A7",
+      "level": 1
+    },
+    {
+      "id": "A8",
+      "name": "A8",
+      "level": 2
+    },
+    {
+      "id": "A9",
+      "name": "A9",
+      "level": 3
+    },
+    {
+      "id": "A10",
+      "name": "A10",
+      "level": 1
+    },
+    {
+      "id": "A11",
+      "name": "A11",
+      "level": 2
+    },
+    {
       "id": "B1",
       "name": "B1",
       "level": 1
@@ -29,6 +69,46 @@
       "id": "B3",
       "name": "B3",
       "level": 3
+    },
+    {
+      "id": "B4",
+      "name": "B4",
+      "level": 1
+    },
+    {
+      "id": "B5",
+      "name": "B5",
+      "level": 2
+    },
+    {
+      "id": "B6",
+      "name": "B6",
+      "level": 3
+    },
+    {
+      "id": "B7",
+      "name": "B7",
+      "level": 1
+    },
+    {
+      "id": "B8",
+      "name": "B8",
+      "level": 2
+    },
+    {
+      "id": "B9",
+      "name": "B9",
+      "level": 3
+    },
+    {
+      "id": "B10",
+      "name": "B10",
+      "level": 1
+    },
+    {
+      "id": "B11",
+      "name": "B11",
+      "level": 2
     },
     {
       "id": "C1",
@@ -46,79 +126,44 @@
       "level": 3
     },
     {
-      "id": "D1",
-      "name": "D1",
+      "id": "C4",
+      "name": "C4",
       "level": 1
     },
     {
-      "id": "D2",
-      "name": "D2",
+      "id": "C5",
+      "name": "C5",
       "level": 2
     },
     {
-      "id": "D3",
-      "name": "D3",
+      "id": "C6",
+      "name": "C6",
       "level": 3
     },
     {
-      "id": "E1",
-      "name": "E1",
+      "id": "C7",
+      "name": "C7",
       "level": 1
     },
     {
-      "id": "E2",
-      "name": "E2",
+      "id": "C8",
+      "name": "C8",
       "level": 2
     },
     {
-      "id": "E3",
-      "name": "E3",
+      "id": "C9",
+      "name": "C9",
       "level": 3
     },
     {
-      "id": "F1",
-      "name": "F1",
+      "id": "C10",
+      "name": "C10",
       "level": 1
     },
     {
-      "id": "F2",
-      "name": "F2",
+      "id": "C11",
+      "name": "C11",
       "level": 2
-    },
-    {
-      "id": "F3",
-      "name": "F3",
-      "level": 3
-    },
-    {
-      "id": "G1",
-      "name": "G1",
-      "level": 1
-    },
-    {
-      "id": "G2",
-      "name": "G2",
-      "level": 2
-    },
-    {
-      "id": "G3",
-      "name": "G3",
-      "level": 3
-    },
-    {
-      "id": "H1",
-      "name": "H1",
-      "level": 1
-    },
-    {
-      "id": "H2",
-      "name": "H2",
-      "level": 2
-    },
-    {
-      "id": "H3",
-      "name": "H3",
-      "level": 3
     }
   ]
 }
