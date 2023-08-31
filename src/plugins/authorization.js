@@ -16,7 +16,7 @@ module.exports = {
     const restrictedRoutes = options.restrictedRoutes || [];
 
     server.ext('onPreHandler', (request, h) => {
-      if (restrictedRoutes.includes(request.route.path)) {
+      if (restrictedRoutes.includes(request.path)) {
         return authorizeAdmin(request, h);
       } else {
         return h.continue;
