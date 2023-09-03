@@ -185,8 +185,8 @@ const getAvailableSlotsForTime = async (startTime, endTime, date) => {
             },
             {
               endTime: {
-                [db.Sequelize.Op.gt]: startTime,
-                [db.Sequelize.Op.lt]: endTime
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
               }
             },
             {
@@ -331,8 +331,8 @@ const updateReservation = async (userSlot, startTime, endTime, date, email, id) 
             },
             {
               endTime: {
-                [db.Sequelize.Op.gt]: startTime,
-                [db.Sequelize.Op.lt]: endTime
+                [db.Sequelize.Op.gte]: startTime,
+                [db.Sequelize.Op.lte]: endTime
               }
             },
             {
@@ -381,6 +381,9 @@ const updateReservation = async (userSlot, startTime, endTime, date, email, id) 
   reservation.startTime = startTime;
   reservation.endTime = endTime;
   reservation.date = date;
+  if(reservation.parkingStatus === true) {
+    reservation.parkingStatus = false;
+  }
   await reservation.save();
 
   const qrCode = await qrcode.toDataURL(JSON.stringify(reservation));
