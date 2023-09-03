@@ -18,6 +18,7 @@ const createTransporter = async () => {
   const accessToken = await new Promise((resolve, reject) => {
     oauth2Client.getAccessToken((err, token) => {
       if (err) {
+        console.log('error', err);
         reject();
       }
       resolve(token);
@@ -29,6 +30,7 @@ const createTransporter = async () => {
     auth: {
       type: 'OAuth2',
       user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
       accessToken,
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
@@ -41,13 +43,12 @@ const createTransporter = async () => {
 
 async function sendReservationEmail(toEmail, reservationData) {
   const { slot, startTime, endTime, date, qrCodeImage } = reservationData;
-  let emailTransporter = await createTransporter();
+  const emailTransporter = await createTransporter();
   const dateObj = new Date(date);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = dateObj.toLocaleDateString('en-US', options);
    
   const htmlContent = generateEmailTemplate(slot, formattedDate, startTime, endTime, 'reservation');
-
   const mailOptions = {
     from: process.env.EMAIL,
     to: toEmail,
@@ -71,7 +72,7 @@ async function sendReservationEmail(toEmail, reservationData) {
 
 async function sendUpdationEmail(toEmail, reservationData) {
   const { slot, startTime, endTime, date, qrCodeImage } = reservationData;
-  let emailTransporter = await createTransporter();
+  const emailTransporter = await createTransporter();
   const dateObj = new Date(date);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = dateObj.toLocaleDateString('en-US', options);
@@ -101,7 +102,7 @@ async function sendUpdationEmail(toEmail, reservationData) {
 
 async function sendCancellationEmail(toEmail, reservationData) {
   const { slot, startTime, endTime, date } = reservationData;
-  let emailTransporter = await createTransporter();
+  const emailTransporter = await createTransporter();
   const dateObj = new Date(date);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = dateObj.toLocaleDateString('en-US', options);
@@ -125,7 +126,7 @@ async function sendCancellationEmail(toEmail, reservationData) {
 
 async function sendAdminCancellationEmail(toEmail, reservationData) {
   const { slot, startTime, endTime, date } = reservationData;
-  let emailTransporter = await createTransporter();
+  const emailTransporter = await createTransporter();
   const dateObj = new Date(date);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = dateObj.toLocaleDateString('en-US', options);
